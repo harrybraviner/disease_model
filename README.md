@@ -4,9 +4,9 @@ Diseases Transmission Via Homes And Workplaces
 # Disclaimer
 
 I am **not** an epidemiologist or a medical doctor.
-I have no domain expertise in the field.
+I have *no* domain expertise in the field.
 
-The work in this repository is purely a mathematical exercise to investigate whether workplace size **could** be a significant factor in disease transmission.
+The work in this repository is purely a modelling exercise to investigate whether workplace size **could** be a significant factor in disease transmission.
 
 This work is motivated by COVID-19, but I've made no real effort to make the parameters especially realistic.
 You should be careful about drawing any conclusions from this.
@@ -47,7 +47,7 @@ p_symptomatic = np.array(([0.0] * 3) + ([0.05] * 6) + ([0.1] * 3) + ([0.2]*6) + 
 and `N_work` set to either 100 or 10, and `symptomatics_stay_off_work` set to true or false.
 These were done using the code in commit `6f15dd2`.
 
-[Effect of workplace size and quarantine on disease transmission](./images/workplace_sizes.png)
+![Effect of workplace size and quarantine on disease transmission](./images/workplace_sizes.png)
 
 For `N_work` equal to 100, 4 random individuals were initially infected.
 For `N_work` equal to 10 this resulted in the disease rapidly dying out - in these cases the curves shown are for 30 initially infected individuals.
