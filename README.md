@@ -3,10 +3,10 @@ Diseases Transmission Via Homes And Workplaces
 
 # Disclaimer
 
-I am *not* an epidemiologist or a medical doctor.
+I am **not** an epidemiologist or a medical doctor.
 I have no domain expertise in the field.
 
-The work in this repository is purely a mathematical exercise to investigate whether workplace size *could* be a significant factor in disease transmission.
+The work in this repository is purely a mathematical exercise to investigate whether workplace size **could** be a significant factor in disease transmission.
 
 This work is motivated by COVID-19, but I've made no real effort to make the parameters especially realistic.
 You should be careful about drawing any conclusions from this.
@@ -17,8 +17,8 @@ I consider a town with a population of size `N_pop`.
 Each person has a workplace and a home.
 Every workplace contains `N_work` people, and every home `N_home` people.
 
-Each day, a person has a `beta_work / N_work` probability of being infected by _each_ infected person in the same workplace.
-Similarly, at home they have a `beta_home / N_home` probability of being infected by _each_ infected person in the same home.
+Each day, a person has a `beta_work / N_work` probability of being infected by *each* infected person in the same workplace.
+Similarly, at home they have a `beta_home / N_home` probability of being infected by *each* infected person in the same home.
 The `1 / N_work` and `1 / N_home` factors are to account for the fact that worker in a larger workplace will have contact with a smaller proportion of their colleagues.
 Keeping `beta_work` constant and varying `N_work` will keep constant the expected number of colleagues that a single infected worker will infect.
 
