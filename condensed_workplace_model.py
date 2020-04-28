@@ -93,6 +93,10 @@ def run_simulation(params):
     v_symptomatic = np.full(shape=(N_pop,), fill_value=False)
     v_days_infected = np.full(shape=(N_pop,), fill_value=0)
 
+    v_work_vectors = np.zeros(shape=(len(w_set),len(v_work)), dtype=bool)
+    for w in w_set:
+        v_work_vectors[w] = v_work == w
+
     def stochastic_update():
         # Compute the probability of a susceptible getting infected by various routes
         
@@ -103,11 +107,11 @@ def run_simulation(params):
             w_log_mat = w_log_matrix_list[w]
             # Compute log(1 - p_i) where i ranges over workers in this workplace
             if not symptomatics_stay_off_work:
-                log_one_minus_p = np.matmul(w_log_mat, v_infected[v_work == w])
+                log_one_minus_p = np.matmul(w_log_mat, v_infected[v_work_vectors[w]])
             else:
-                log_one_minus_p = np.matmul(w_log_mat, v_infected[v_work == w] & ~v_symptomatic[v_work == w])
+                log_one_minus_p = np.matmul(w_log_mat, v_infected[v_work_vectors[w]] & ~v_symptomatic[v_work_vectors[w]])
             p = 1.0 - np.exp(log_one_minus_p)
-            v_p_work[v_work == w] = p
+            v_p_work[v_work_vectors[w]] = p
             
         # For each home, compute the infection probability
         h_infected = np.bincount(v_home[v_infected], minlength=np.max(v_home) + 1)
