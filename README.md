@@ -27,12 +27,31 @@ I also include `beta_street` parameter that allows "passing in the street" infec
 Each day an infected person has a (non-constant) probability of recovering, or becoming symptomatic.
 The parameter `symptomatics_stay_off_work` controls whether people who have developed symptoms stay away from their workplace, and so do not infect others.
 
+## Workplace condensation
+
+It was pointed out to me that the workplace model (in which I scale down transmission probability with workplace size) is somewhat unrealistic.
+You don't have an equal chance of infecting everyone in your workplace - there's certain people (e.g. the person you sit next to) who you have a much higher chance of infecting.
+
+To model this I add the option to enable "workplace condensation".
+In this model transmission in the workplace is controlled by a matrix, `W[i, j]`, describing the probability of person `j` transmitting the disease to person `i`.
+
+The `beta_work` parameter still exists and the matrix `W[i, j]` will be chosen such that `sum_i W[i, j] = beta_work`.
+i.e. we still keep the expected number of colleagues that will be infected per day constant, in a workplace in which everyone is susceptible.
+To derive the `W` matrices we define
+```
+
+W[i, j] =  0 if i = j
+        =  a + b  if  |i - j| <= lambda_work
+        =  a  otherwise
+```
+We need `b < beta_work / (2 * lambda_work)` to get a positive `a`.
+
 # Results
 
 Is it at least *possible* for workplace size to have a significant effect on transmission?
 Yes.
 
-The plot below shows the resuls of simulations with
+The plot below shows the results of simulations with
 ```
 N_pop = int(1e5)  # Population size
 N_home = 2        # Number of people in a home
