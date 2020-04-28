@@ -4,7 +4,7 @@ Diseases Transmission Via Homes And Workplaces
 # Disclaimer
 
 I am **not** an epidemiologist or a medical doctor.
-I have *no* domain expertise in the field.
+I have **no** domain expertise in the field.
 
 The work in this repository is purely a modelling exercise to investigate whether workplace size **could** be a significant factor in disease transmission.
 
