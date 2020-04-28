@@ -44,6 +44,8 @@ def run_simulation(params):
     p_symptomatic = np.array(([0.0] * 3) + ([0.05] * 6) + ([0.1] * 3) + ([0.2]*6) + [0.2])
 
     # Static state of the population
+    # Note: The way we set up workplaces here means that they are contingious.
+    # This is important to acheive faster running times.
     v_work = np.arange(N_pop) // N_work  # Index of workplace
     v_home = np.arange(N_pop) // N_home  # Index of home
     rng.shuffle(v_home)                  # Make workplace and home independent
@@ -93,9 +95,19 @@ def run_simulation(params):
     v_symptomatic = np.full(shape=(N_pop,), fill_value=False)
     v_days_infected = np.full(shape=(N_pop,), fill_value=0)
 
-    v_work_vectors = np.zeros(shape=(len(w_set),len(v_work)), dtype=bool)
-    for w in w_set:
-        v_work_vectors[w] = v_work == w
+    # Pre-compute these to allow slice access for workplace computations in stochastic_update
+    # This is why we need workplaces to be contigious
+    # i.e. persons 0, 1, 2, ... n_0 - 1 all work in workplace 0,
+    # and persons n_0, n_0 + 1, ..., n_1 - 1 all work in workplace 1, etc.
+    work_start_vectors = np.zeros(shape=(len(w_set),), dtype=np.int32)
+    work_end_vectors = np.zeros(shape=(len(w_set),), dtype=np.int32)
+    for w in range(len(w_set)):
+        x = np.argmax([v_work == w])
+        work_start_vectors[w] = x
+        if w > 0:
+            work_end_vectors[w - 1] = x
+    work_start_vectors[0] = 0
+    work_end_vectors[-1] = len(v_work)
 
     def stochastic_update():
         # Compute the probability of a susceptible getting infected by various routes
@@ -107,11 +119,14 @@ def run_simulation(params):
             w_log_mat = w_log_matrix_list[w]
             # Compute log(1 - p_i) where i ranges over workers in this workplace
             if not symptomatics_stay_off_work:
-                log_one_minus_p = np.matmul(w_log_mat, v_infected[v_work_vectors[w]])
+                log_one_minus_p = np.matmul(w_log_mat, v_infected[work_start_vectors[w]:work_end_vectors[w]])
             else:
-                log_one_minus_p = np.matmul(w_log_mat, v_infected[v_work_vectors[w]] & ~v_symptomatic[v_work_vectors[w]])
+                log_one_minus_p = \
+                        np.matmul(w_log_mat,
+                                  v_infected[work_start_vectors[w]:work_end_vectors[w]] \
+                                  & ~v_symptomatic[work_start_vectors[w]:work_end_vectors[w]])
             p = 1.0 - np.exp(log_one_minus_p)
-            v_p_work[v_work_vectors[w]] = p
+            v_p_work[work_start_vectors[w]:work_end_vectors[w]] = p
             
         # For each home, compute the infection probability
         h_infected = np.bincount(v_home[v_infected], minlength=np.max(v_home) + 1)
